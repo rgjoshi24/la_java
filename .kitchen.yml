@@ -15,12 +15,26 @@ verifier:
 
 platforms:
   - name: centos-7.3
+    driver:
+      image_id: ami-e1496384
+  - name: centos-6.8
+    driver:
+      image_id: ami-ff48629a
 
 suites:
-  - name: default
-    run_list:
-      - recipe[la_java::default]
+  - name: dev
     verifier:
       inspec_tests:
-        - test/smoke/default
-    attributes:
+        - test/smoke/dev
+    run_list:
+      - recipe[la_java::default]
+    attributes: { 'java': { 'jdk_version': '7' } }
+    excludes: centos-6.8
+  - name: prod
+    verifier:
+      inspec_tests:
+        - test/smoke/prod
+    run_list:
+      - recipe[la_java::default]
+    atributes: { 'java': { 'jdk_version': '6' } }
+    includes: centos-7.3
